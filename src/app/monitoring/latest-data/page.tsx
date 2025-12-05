@@ -29,47 +29,54 @@ export default function LatestDataPage() {
   const [form] = Form.useForm();
   const [hostGroups, setHostGroups] = useState<HostGroup[]>([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
+  const [hosts, setHosts] = useState<any[]>([]);
+  const [loadingHosts, setLoadingHosts] = useState(false);
+  const [selectedHosts, setSelectedHosts] = useState<string[]>([]);
+  const [value, setValue] = useState<string[]>([]);
 
 
   const onFormLayoutChange: FormProps<any>['onValuesChange'] = ({ size }) => {
     setComponentSize(size);
   };
 
-//REQUEST TO GET HOST GROUPS
+  // REQUEST TO GET HOST GROUPS (FINAL CORRECT IMPLEMENTATION)
   const handlegetData = async () => {
     setLoadingGroups(true);
+
     const payload = {
-      jsonrpc: "2.0",
-      method: "template.get",
+      jsonrpc: '2.0',
+      method: 'hostgroup.get',
       params: {
-        output: "extend",
-        selectGroups: "extend",
-        groupids: ["21"],
+        output: ['groupid', 'name'],
       },
-      auth: "7de73a2634c45b95faaecb45d0429286005a442e974352f4431eaee833a66d00",
-      id: 2,
+      auth: '7de73a2634c45b95faaecb45d0429286005a442e974352f4431eaee833a66d00',
+      id: 1,
     };
 
     try {
-      const response = await axios.post('https://192.168.0.252/monitor/api_jsonrpc.php', payload, {
+      const response = await axios.post('/api/zabbix-proxy', payload, {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      // Normalize response to an array of items
-      const items = response?.data?.result ?? response?.data ?? [];
+      const items = response?.data?.result ?? [];
 
-      if (Array.isArray(items)) {
-        const normalized = items.map((t: any) => ({
-          groupid: String(t.templateid ?? t.groupid ?? t.id ?? ''),
-          name: t.name ?? t.template ?? t.label ?? String(t),
-        }));
-        setHostGroups(normalized);
-      } else {
-        setHostGroups([]);
-        console.warn('handlegetData - unexpected response shape', items);
-      }
+      const normalized = Array.isArray(items)
+        ? items.map((g: any) => ({ groupid: String(g.groupid), name: g.name }))
+        : [];
+
+      setHostGroups(normalized);
     } catch (err: any) {
-      console.error('handlegetData - error', err);
+        // Improved error logging to capture axios response/request details
+        console.error('Hostgroup fetch error', err);
+        if (err?.response) {
+          console.error('Hostgroup fetch - response status:', err.response.status);
+          console.error('Hostgroup fetch - response data:', err.response.data);
+        } else if (err?.request) {
+          console.error('Hostgroup fetch - no response received, request:', err.request);
+        } else {
+          console.error('Hostgroup fetch - message:', err?.message);
+        }
+      setHostGroups([]);
     } finally {
       setLoadingGroups(false);
     }
@@ -78,6 +85,54 @@ export default function LatestDataPage() {
   useEffect(() => {
     handlegetData();
   }, []);
+
+  // Fetch hosts for selected group IDs
+  const handleGetHosts = async (groupIds: string[]) => {
+    if (!groupIds?.length) {
+      setHosts([]);
+      return;
+    }
+
+    setLoadingHosts(true);
+
+    const payload = {
+      jsonrpc: '2.0',
+      method: 'host.get',
+      params: {
+        output: ['hostid', 'name'],
+        groupids: groupIds,
+      },
+      auth: '7de73a2634c45b95faaecb45d0429286005a442e974352f4431eaee833a66d00',
+      id: 2,
+    };
+
+    try {
+      const res = await axios.post('/api/zabbix-proxy', payload, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      setHosts(res?.data?.result ?? []);
+    } catch (err: any) {
+      // Improved error logging for hosts fetch
+      console.error('Host fetch error', err);
+      if (err?.response) {
+        console.error('Host fetch - response status:', err.response.status);
+        console.error('Host fetch - response data:', err.response.data);
+      } else if (err?.request) {
+        console.error('Host fetch - no response received, request:', err.request);
+      } else {
+        console.error('Host fetch - message:', err?.message);
+      }
+      setHosts([]);
+    } finally {
+      setLoadingHosts(false);
+    }
+  };
+
+  // Auto-fetch hosts when selected group IDs (`value`) changes
+  useEffect(() => {
+    handleGetHosts(value);
+  }, [value]);
 
   // Log hostGroups whenever it changes so we can inspect values during runtime
   useEffect(() => {
@@ -107,7 +162,6 @@ export default function LatestDataPage() {
 
   // Select state for Host groups
   const MAX_COUNT = 3;
-  const [value, setValue] = useState<string[]>([]);
   const suffix = <span style={{ color: '#8c8c8c' }}>▾</span>;
 
   return (
@@ -150,14 +204,14 @@ export default function LatestDataPage() {
                   <Select
                     mode="multiple"
                     maxCount={MAX_COUNT}
-                    value={value}
-                    loading={loadingGroups}
+                    value={selectedHosts}
+                    loading={loadingHosts}
                     style={{ width: '100%' }}
-                    onChange={setValue}
+                    onChange={setSelectedHosts}
                     suffixIcon={suffix}
                     placeholder="Please select"
                     size="small"
-                    options={hostGroups.map(g => ({ value: g.groupid, label: g.name }))}
+                    options={hosts.map(h => ({ value: h.hostid, label: h.name }))}
                   />
                 </Col>
               </Row>
