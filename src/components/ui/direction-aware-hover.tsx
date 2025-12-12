@@ -11,12 +11,14 @@ export const DirectionAwareHover = ({
   childrenClassName,
   imageClassName,
   className,
+  isCollapsed,
 }: {
   imageUrl: string;
   children?: React.ReactNode | string;
   childrenClassName?: string;
   imageClassName?: string;
   className?: string;
+  isCollapsed?: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -65,8 +67,9 @@ export const DirectionAwareHover = ({
       onMouseEnter={handleMouseEnter}
       ref={ref}
       className={cn(
-        // reduced default height to better match sidebar; keeps responsive widths
-        "h-40 w-48 md:h-56 md:w-72 bg-transparent rounded-lg overflow-hidden group/card relative",
+        // h-14 (56px) for expanded, h-5 (20px) for collapsed
+        isCollapsed ? "h-5" : "h-14",
+        "w-48 md:w-72 bg-transparent rounded-lg overflow-hidden group/card relative",
         className
       )}
     >
