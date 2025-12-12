@@ -200,19 +200,19 @@ export default function Sidebar() {
     <div
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className={`${collapsedEffective ? "w-16 p-4" : "w-70 p-6"} 
+      className={`${collapsedEffective ? "w-16 p-2" : "w-70 pl-2 p-6"} 
       bg-white/70 backdrop-blur-xl border-r border-gray-200 h-screen flex flex-col transition-all duration-200`}
     >
       <div
         id="imageIcon"
-        className={`text-2xl font-bold text-blue-900 mb-8 flex items-center 
-        ${collapsedEffective ? "justify-center" : "justify-start"} gap-2 group`}
+        className={`relative text-2xl font-bold text-blue-900 mb-8 flex items-center 
+        ${collapsedEffective ? "justify-center pl-8" : "justify-start"} gap-2 group`}
       >
         <DirectionAwareHover
           imageUrl="/image.png"
           className={
             collapsedEffective
-              ? "flex items-center justify-center p-3 rounded-lg h-12 w-12"
+              ? "flex items-center justify-center p-2 rounded-lg h-12 w-12"
               : "w-28 sm:w-36 md:w-40 lg:w-48 h-auto"
           }
           imageClassName={collapsedEffective ? "p-0 object-contain" : "py-8 object-contain"}
@@ -226,7 +226,9 @@ export default function Sidebar() {
           aria-label={collapsedEffective ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsedEffective}
           title={collapsedEffective ? "Expand sidebar" : "Collapse sidebar"}
-          className="focus:outline-none ml-auto md:ml-0"
+            className={`${collapsedEffective 
+              ? "focus:outline-none absolute left-3" 
+              : "focus:outline-none ml-auto md:ml-0"}`}
         >
           {/* Show a clear chevron indicating action: right to expand, left to collapse */}
           {collapsedEffective ? (
@@ -259,7 +261,7 @@ export default function Sidebar() {
                 <button
                   onClick={() => toggleMenu(item.name)}
                   className={`${collapsedEffective
-                    ? "h-12 w-12 flex items-center justify-center p-2 rounded-lg"
+                    ? "h-12 w-12 flex items-center justify-center p-2 rounded-lg mx-auto"
                     : "w-full flex items-center justify-between px-4 py-2 rounded-lg"}
                   transition-all ${isActive ? "bg-blue-600 text-white shadow-md" : "text-gray-700 hover:bg-blue-100"}`}
                 >
@@ -345,7 +347,7 @@ export default function Sidebar() {
               key={item.name}
               href={item.href!}
               className={`${collapsedEffective
-                ? "h-12 w-12 flex justify-center p-2 rounded-lg"
+                ? "h-12 w-12 flex items-center justify-center p-2 rounded-lg mx-auto"
                 : "flex items-center gap-3 px-4 py-2 rounded-lg"} 
                 transition-all ${isActive ? "bg-blue-600 text-white shadow-md" : "text-gray-700 hover:bg-blue-100"}`}
             >

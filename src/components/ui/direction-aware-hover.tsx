@@ -68,7 +68,7 @@ export const DirectionAwareHover = ({
       ref={ref}
       className={cn(
         // h-14 (56px) for expanded, h-5 (20px) for collapsed
-        isCollapsed ? "h-5" : "h-14",
+        isCollapsed ? "h-1" : "h-24",
         "w-48 md:w-72 bg-transparent rounded-lg overflow-hidden group/card relative",
         className
       )}
