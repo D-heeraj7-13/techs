@@ -1,5 +1,6 @@
 "use client";
 
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { useEffect, useState } from "react";
 
 interface TriggerItem {
@@ -102,9 +103,9 @@ export default function DashboardPage() {
               <th className="p-3">Information</th>
               <th className="p-3">Not Classified</th>
             </tr>
-          </thead>
+</thead>
 
-          <tbody>
+<tbody>
             {Object.entries(data).map(([group, values]) => (
               <tr key={group} className="border-b hover:bg-gray-50">
                 <td className="p-3 font-medium">{group}</td>

@@ -200,7 +200,7 @@ export default function Sidebar() {
     <div
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className={`${collapsedEffective ? "w-16 p-2" : "w-70 pl-2 p-6"} 
+      className={`${collapsedEffective ? "w-16 p-2" : "w-64 px-4 py-6"}  //px new
       bg-white/70 backdrop-blur-xl border-r border-gray-200 h-screen flex flex-col transition-all duration-200`}
     >
       <div
