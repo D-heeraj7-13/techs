@@ -1,6 +1,6 @@
 "use client";
 
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+// import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { useEffect, useState } from "react";
 
 interface TriggerItem {
